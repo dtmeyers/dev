@@ -66,8 +66,17 @@ if command -v rustup >/dev/null 2>&1; then
   ok "rustup already present ($(rustc -V))"
 else
   if dpkg -l rustc 2>/dev/null | grep -q '^ii'; then
-    warn "apt's rustc is installed and is usually too old; removing it"
-    sudo apt-get remove -y rustc cargo
+    warn "apt's rustc is installed ($(rustc -V 2>/dev/null || echo 'version unknown'))."
+    warn "It is usually too old to build mdcat, and having both on PATH causes"
+    warn "confusing failures depending on which one resolves first."
+    read -rp "  Remove the apt rustc and cargo packages? [y/N] " reply
+    if [[ "$reply" =~ ^[Yy]$ ]]; then
+      sudo apt-get remove -y rustc cargo
+      ok "apt rustc and cargo removed"
+    else
+      warn "keeping apt's rustc; rustup will be installed alongside it"
+      warn "if the mdcat build fails, check 'which -a rustc' — ~/.cargo/bin must come first"
+    fi
   fi
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
   ok "rustup installed"
@@ -233,7 +242,7 @@ USAGE
 
   Both panes open in the directory you pass, so Claude Code's @ file
   completion is relative to it. Defaults to the current directory.
-    dev ~/your-project
+    dev ~/Kalshi
 
 PANES                  prefix is Ctrl-b: press and release, then the key
   Ctrl-b  < >          switch panes (arrow keys)
