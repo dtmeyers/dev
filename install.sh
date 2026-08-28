@@ -242,7 +242,7 @@ USAGE
 
   Both panes open in the directory you pass, so Claude Code's @ file
   completion is relative to it. Defaults to the current directory.
-    dev ~/Kalshi
+    dev ~/my-project
 
 PANES                  prefix is Ctrl-b: press and release, then the key
   Ctrl-b  < >          switch panes (arrow keys)
