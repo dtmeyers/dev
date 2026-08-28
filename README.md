@@ -22,9 +22,9 @@ machine deserves.
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/dtmeyers/dev/main/install-dev.sh -o install-dev.sh
-less install-dev.sh          # read it first
-bash install-dev.sh
+curl -fsSL https://raw.githubusercontent.com/dtmeyers/dev/main/install.sh -o install.sh
+less install.sh
+bash install.sh
 ```
 
 Then:
