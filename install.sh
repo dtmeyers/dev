@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# install-dev.sh — sets up the "dev" terminal IDE on a fresh Raspberry Pi
+# install.sh — sets up the "dev" terminal IDE on a fresh Raspberry Pi
 #
 #   yazi (file manager) + mdcat (markdown preview) + Claude Code,
 #   arranged as a split tmux session launched by the `dev` command.
@@ -8,7 +8,7 @@
 # Safe to re-run: every step is skipped if already done, and any config
 # file that already exists is backed up before being replaced.
 #
-# Usage:  bash install-dev.sh
+# Usage:  bash install.sh
 #
 
 set -euo pipefail
