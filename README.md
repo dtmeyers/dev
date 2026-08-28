@@ -86,10 +86,7 @@ Console account with API billing. It also wants 4GB+ RAM and arm64 or x64.
 Standard practice for both projects, but you should know it's happening. Read
 the script.
 
-**It may remove apt's Rust.** If `rustup` isn't present but `rustc` was
-installed from apt, the script removes `rustc` and `cargo` before installing
-rustup, because the distro version is usually too old to build mdcat and the two
-fight over PATH. If you deliberately use the distro toolchain, comment that out.
+**It may offer to remove apt's Rust. If rustup isn't present but rustc was installed from apt, the script asks whether to remove rustc and cargo first. The distro version is usually too old to build mdcat, and having both on PATH causes failures that depend on which resolves first. Declining is fine — rustup installs alongside, but ~/.cargo/bin needs to come first in your PATH.
 
 **Swap handling is Pi-specific.** The swap step uses `dphys-swapfile`, which
 doesn't exist outside Raspberry Pi OS. On other distros that step will fail. The
