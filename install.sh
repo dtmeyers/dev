@@ -302,9 +302,9 @@ fi
 
 # ------------------------------------------------------------------ 12. PATH
 info "Checking PATH"
-NEEDS_PATH=0
-case ":$PATH:" in *":$BIN_DIR:"*) ;; *) NEEDS_PATH=1 ;; esac
-if [ "$NEEDS_PATH" -eq 1 ] && ! grep -q '.local/bin' "$HOME/.bashrc" 2>/dev/null; then
+# Check .bashrc itself, not $PATH: BIN_DIR was already exported above,
+# so $PATH always contains it at this point and can't tell us anything.
+if ! grep -qsF '.local/bin' "$HOME/.bashrc"; then
   echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
   warn "added ~/.local/bin to PATH in .bashrc"
 fi
