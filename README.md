@@ -66,10 +66,17 @@ inside the session.
 | `Ctrl-b d` | detach, leaving both running |
 | `Ctrl-b X` | kill the session, with a confirm |
 | `C` (in yazi) | open Claude Code on the hovered file |
+| `M` (in yazi) | read the hovered markdown file in `less` |
+| `J` / `K` (in yazi) | scroll the preview ~3 screens down / up |
 | `c c` (in yazi) | copy the hovered file's full path |
 
-You often won't need that last one — Claude Code's `@` references tab-complete
-against the working directory, and both panes start in the same one.
+Use `M` for anything long. The preview pane re-renders the whole file through
+mdcat on every scroll, which gets slow on a Pi; `M` renders it once and hands it
+to `less`, where `Space`/`b` page, `g`/`G` jump to the top/bottom, `/` searches,
+and `q` drops you back into yazi.
+
+You often won't need `c c` — Claude Code's `@` references tab-complete against
+the working directory, and both panes start in the same one.
 
 ## Requirements
 
@@ -98,9 +105,12 @@ start if you invoke it with sudo.
 
 ## Version drift
 
-Yazi renamed several config keys in 25.5.31 (`manager` → `mgr`, `name` → `url`)
-and mdcat has moved its colour flags around across 2.x. The script detects both
-and writes whichever syntax your build wants. If yazi still complains at startup,
+Yazi renamed several config keys in 25.5.31 (`manager` → `mgr`, `name` → `url`),
+and in 25.12.29 replaced the `$0`/`$1` parameters in shell commands with
+placeholders like `%h` (on newer builds `$0` is just `sh`, so old keybindings
+quietly pass the wrong filename). mdcat has also moved its colour flags around
+across 2.x. The script detects all three and writes whichever syntax your build
+wants. If yazi still complains at startup,
 the error names the offending key — check it against the
 [yazi docs](https://yazi-rs.github.io/docs/configuration/overview) for your
 version.
