@@ -153,6 +153,19 @@ else
 fi
 ok "yazi $YAZI_VER — using [$MGR_KEY] and '$MATCH_KEY ='"
 
+# Yazi 25.12.29 replaced the positional $0/$1 shell parameters with %h-style
+# placeholders. On newer builds $0 is the literal "sh" and $1 is empty, so the
+# old syntax silently passes the wrong filename.
+if printf '%s\n25.12.29\n' "$YAZI_VER" | sort -V | head -1 | grep -q '^25\.12\.29$'; then
+  C_RUN='shell --block -- claude %h'
+  M_RUN="shell --block -- mdcat $MDCAT_FLAG --columns=\$(tput cols) %h | less -R"
+  ok "using %h shell placeholders"
+else
+  C_RUN='shell --block "claude \"$0\""'
+  M_RUN="shell --block \"mdcat $MDCAT_FLAG --columns=\$(tput cols) \\\"\$0\\\" | less -R\""
+  warn "yazi $YAZI_VER is pre-25.12.29; using legacy \$0 shell parameters"
+fi
+
 # ---------------------------------------------------------------- 7. plugins
 info "Installing yazi plugins and flavor"
 mkdir -p "$CONFIG_DIR"
@@ -192,11 +205,31 @@ ok "theme.toml"
 backup "$CONFIG_DIR/keymap.toml"
 cat > "$CONFIG_DIR/keymap.toml" <<EOF
 # Capital C hands the hovered file straight to Claude Code and returns
-# to yazi on exit. \$0 = hovered file, \$@ = selected files.
+# to yazi on exit.
 [[$MGR_KEY.prepend_keymap]]
-on = "C"
-run = 'shell --block "claude \\"\$0\\""'
+on   = "C"
+run  = '$C_RUN'
 desc = "Open Claude Code on hovered file"
+
+# Capital M renders the hovered markdown file once and opens it in less.
+# Faster than scrolling the preview on long files: piper re-runs mdcat on
+# every scroll. In less: Space/b page, g/G top/bottom, / search, q back.
+[[$MGR_KEY.prepend_keymap]]
+on   = "M"
+run  = '$M_RUN'
+desc = "Read markdown in less"
+
+# Bigger preview scroll steps than the default J/K (seek 5 = half a page).
+# One unit is ~10% of the preview height, so 30 is about three screens.
+[[$MGR_KEY.prepend_keymap]]
+on   = "J"
+run  = "seek 30"
+desc = "Scroll preview down ~3 screens"
+
+[[$MGR_KEY.prepend_keymap]]
+on   = "K"
+run  = "seek -30"
+desc = "Scroll preview up ~3 screens"
 EOF
 ok "keymap.toml"
 
@@ -266,6 +299,8 @@ YAZI
   c c                  copy full path of the hovered file
   c f                  copy filename only
   C                    open Claude Code on the hovered file
+  M                    read hovered markdown in less (q to return)
+  J K                  scroll the preview ~3 screens down / up
   h  l                 up a directory / into a directory
   q                    quit
 
